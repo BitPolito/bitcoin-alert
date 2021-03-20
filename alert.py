@@ -6,10 +6,9 @@ import time
 from prettytable import PrettyTable
 from colorama import Fore, init
 from datetime import datetime, timedelta
-import winsound
+from playsound import playsound
 
-#file = 'alert.mp3' #Linux
-file = 'alert2.wav' #Windows
+file = 'alert.wav'
 url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
 
 delta = 500
@@ -79,8 +78,7 @@ try:
                                 ])
         print(table)
         if (float(price) > float(pre+delta)) or (float(price) < float(pre-delta)):
-            winsound.PlaySound(file, winsound.SND_ASYNC | winsound.SND_ALIAS)
-            # os.system("mpg123 " + file)
+            playsound(file)
         pre = price
 
         print()

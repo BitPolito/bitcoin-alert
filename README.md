@@ -2,9 +2,9 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
 
-Made for devotion to the tv series Silicon Valley, it's a Python script to alert with Napalm Death (like the Gilfoyle one) when Bitcoin price changes rapidly above or below a given threshold.
+Made for devotion to the TV series Silicon Valley, it's a Python 3 script that alert with the Napalm Death sound (as the one used by Gilfoyle in Season 5 Episode 3) when the Bitcoin price changes rapidly above or below a given threshold.
 
-The price is fetched from _CoinMarketCap API_ every 5 minutes and the default currency is USD.
+The price is fetched from the [_CoinMarketCap API_](https://coinmarketcap.com/api/) every 5 minutes and the default currency is USD.
 
 ## How to install and run code
 

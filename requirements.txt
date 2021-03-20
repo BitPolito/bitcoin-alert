@@ -1,4 +1,4 @@
 colorama==0.4.1
-prettytable==0.7.2
-PTable==0.9.2
+prettytable==2.1.0
 requests==2.22.0
+playsound==1.2.2
