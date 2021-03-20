@@ -4,7 +4,7 @@
 
 Made for devotion to the tv series Silicon Valley, it's a Python script to alert with Napalm Death (like the Gilfoyle one) when Bitcoin price changes rapidly above or below a given threshold.
 
-The price is fetched from CoinMarketCap API every 5 minutes and the default currency is USD.
+The price is fetched from _CoinMarketCap API_ every 5 minutes and the default currency is USD.
 
 ## How to install and run code
 
