@@ -7,9 +7,27 @@ Made for devotion to the TV series Silicon Valley, it's a Python script that ale
 The price is fetched from the [_CoinMarketCap API_](https://coinmarketcap.com/api/) every 5 minutes and the default currency is USD.
 
 ## How to install and run code
+### Installation
 
-- `pip install -r requirements.txt`
-- `python alert.py`
+```console
+# clone the repo
+$ git clone https://github.com/BITPoliTO/bitcoin-alert.git
+
+# change the working directory to bitcoin-alert
+$ cd bitcoin-alert
+
+# install general requirements
+$ pip install -r requirements.txt
+
+# Run this line only on MacOS
+$ pip install pyobjc
+```
+On **Linux** make sure `python3-gst-1.0` is installed by running `sudo apt install python3-gst-1.0`
+
+### Run
+```console
+$ python alert.py
+```
 
 <br>
 <img src="https://raw.githubusercontent.com/alessandroguggino/GilfoyleBitcoinAlert/master/gif_gilfoyle.gif" width="350" title="Silicon Valley GIF">
