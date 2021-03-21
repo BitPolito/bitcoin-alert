@@ -1,40 +1,28 @@
 import os
 import json
-from requests import Request, Session
-from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import time
+import requests
+from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 from prettytable import PrettyTable
 from colorama import Fore, init
 from datetime import datetime, timedelta
 from playsound import playsound
 
-file = 'alert.wav'
-url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+DEFAULT_TICKER = 'BTC'
+DEFAULT_CONVERT = 'USDT'
+DEFAULT_DELTA_TRIGGER = 500
+DEFAULT_SOUNDFILE = 'alert.wav'
+DEFAULT_DELTA_REFRESH_SECONDS = 10
+MAX_ROWS_DISPLAYED = 11
 
-delta = 500
 
-start = 1
-limit = 10
-convert = 'USD'
-parameters = {
-    'start': int(start),
-    'limit': int(limit),
-    'convert': str(convert)
-}
-headers = {
-    'Accepts': 'application/json',
-    'X-CMC_PRO_API_KEY': '277886d5-e8e1-4b33-8e5d-d50ba830acf0',
-}
+class BitcoinAlert():
+    endpoint = 'https://api.binance.com/api/v3/avgPrice'
 
-init() #colorama init
-
-session = Session()
-session.headers.update(headers)
-
-try:
-    pre = 0.0
-
-    print(Fore.YELLOW + """\
+    @staticmethod
+    def __getLogo():
+        os.system('cls' if os.name == 'nt' else 'clear')
+        return Fore.YELLOW + """\
  ______    _   _                   _                  _       __                 _    
 |_   _ \  (_) / |_                (_)                / \     [  |               / |_  
   | |_) | __ `| |-'.---.   .--.   __   _ .--.       / _ \     | | .---.  _ .--.`| |-' 
@@ -42,8 +30,6 @@ try:
  _| |__) || | | |,| \__. | \__. | | |  | | | |   _/ /   \ \_  | || \__., | |    | |,  
 |_______/[___]\__/'.___.' '.__.' [___][___||__] |____| |____|[___]'.__.'[___]   \__/  
                                                                                       
-            """)
-    print("""\
  ______   _____  _________  _______         __    _  _________    ___    
 |_   _ \ |_   _||  _   _  ||_   __ \       [  |  (_)|  _   _  | .'   `.  
   | |_) |  | |  |_/ | | \_|  | |__) | .--.  | |  __ |_/ | | \_|/  .-.  \ 
@@ -51,45 +37,46 @@ try:
  _| |__) |_| |_    _| |_    _| |_   | \__. || |  | |   _| |_   \  `-'  / 
 |_______/|_____|  |_____|  |_____|   '.__.'[___][___] |_____|   `.___.'  
                                                                          
-            """)
+            """ + Fore.RESET
 
-    print(Fore.RESET) #colorama exit
+    def __init__(self, ticker, convert, delta, sound_file, delta_refresh_seconds):
+        self.ticker = ticker
+        self.convert = convert
+        self.delta = delta
+        self.sound_file = sound_file
+        self.delta_refresh_seconds = delta_refresh_seconds
 
-    while True:
-        table = PrettyTable(
-            ['Asset', 'Pre Value (' + convert + ')', 'New Value (' + convert + ')', 'Last Updated'])
-        
-        response = session.get(url, params=parameters)
-        results = response.json()
-        data = results['data']
-        for currency in data:
-            symbol = currency['symbol']
-            if symbol == 'BTC':
-                name = currency['name']
-                last_updated = currency['last_updated']
-                quotes = currency['quote'][convert]
-                price = quotes['price']
-                price_string = '{:,}'.format(round(price, 2))
-                pre_string = '{:,}'.format(round(pre, 2))
-                table.add_row([name + ' (' + symbol + ')',
-                                pre_string,
-                                price_string,
-                                last_updated
-                                ])
-        print(table)
-        if (float(price) > float(pre+delta)) or (float(price) < float(pre-delta)):
-            playsound(file)
-        pre = price
+    def start(self):
+        try:
+            init()  # colorama init
+            table = PrettyTable(['Asset', 'Previous Value (' + self.convert + ')',
+                                 'New Value (' + self.convert + ')', 'Last Updated'], )
+            previous = 0.0
+            n_prev = 0
+            offset = 0
 
-        print()
-        print("==============================")
-        print('API refreshes every 5 minutes')
-        now = datetime.now()
-        future = now + timedelta(minutes=5)
-        print("Next Update on {}".format(future.strftime("%H:%M:%S")))
-        print("==============================")
-        print()
-        time.sleep(300)
+            while True:
+                response = requests.get(
+                    f'{self.endpoint}?symbol={self.ticker}{self.convert}').json()
+                price = eval(response['price'])
+                table.add_row([f'{self.ticker}', f'{round(previous, 2):,}',
+                               f'{round(price, 2):,}', datetime.now().strftime("%H:%M:%S")])
 
-except (ConnectionError, Timeout, TooManyRedirects) as e:
-    print(e)
+                n_prev += 1
+                if n_prev >= MAX_ROWS_DISPLAYED:
+                    offset += 1
+
+                next_update = (datetime.now() + timedelta(seconds=self.delta_refresh_seconds)).strftime("%H:%M:%S")
+                print(f'{self.__getLogo()}\n{table.get_string(start=offset, end=MAX_ROWS_DISPLAYED+offset)}\
+                    \n\nAPI refreshes every {self.delta_refresh_seconds} seconds (Next Update at {next_update})')
+                if (abs(float(price-previous)) > self.delta):
+                    playsound(self.sound_file)
+                previous = price
+                time.sleep(self.delta_refresh_seconds)
+        except (ConnectionError, Timeout, TooManyRedirects) as e:
+            print(e)
+
+
+if __name__ == "__main__":
+    BitcoinAlert(DEFAULT_TICKER, DEFAULT_CONVERT, DEFAULT_DELTA_TRIGGER,
+                 DEFAULT_SOUNDFILE, DEFAULT_DELTA_REFRESH_SECONDS).start()
