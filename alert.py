@@ -8,8 +8,8 @@ from colorama import Fore, init
 from datetime import datetime, timedelta
 from playsound import playsound
 
-DEFAULT_TICKER = 'ETH'
-DEFAULT_CONVERT = 'EUR'
+DEFAULT_TICKER = 'BTC'
+DEFAULT_CONVERT = 'USDT'
 DEFAULT_DELTA_TRIGGER = 0.00001
 DEFAULT_SOUNDFILE = 'alert.wav'
 DEFAULT_DELTA_REFRESH_SECONDS = 10
