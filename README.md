@@ -4,7 +4,7 @@
 
 Made for devotion to the TV series Silicon Valley, **Gilfoyle Bitcoin Alert** is a Python3 script which alerts the user with the Napalm Death sound (as the one used by Gilfoyle in Season 5 Episode 3) when the Bitcoin price changes rapidly above or below a given threshold.
 
-The price is fetched from the [_CoinMarketCap API_](https://coinmarketcap.com/api/) every 5 minutes and the default currency is USD.
+The price is fetched from the [_Binance API_](https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md) every 30 seconds and the default currency is USD. These values can be changed at will.
 
 ## How to install and run code
 ### Installation
