@@ -10,7 +10,7 @@ from playsound import playsound
 
 DEFAULT_TICKER = 'BTC'
 DEFAULT_CONVERT = 'USDT'
-DEFAULT_DELTA_TRIGGER = 0.001
+DEFAULT_DELTA_TRIGGER = 0.01
 DEFAULT_SOUNDFILE = 'alert.wav'
 DEFAULT_DELTA_REFRESH_SECONDS = 30
 MAX_ROWS_DISPLAYED = 11
@@ -65,7 +65,8 @@ class BitcoinAlert():
                 price = eval(response['price'])
                 change = self.__getPercent(price, previous)
                 table.add_row([f'{self.ticker}', f'{round(previous, 2):,}',
-                               f'{round(price, 2):,}', datetime.now().strftime("%H:%M:%S"), f'{round(change, 3)} %'])
+                               f'{round(price, 2):,}', datetime.now().strftime("%H:%M:%S"),
+                               f'+{round(change, 3)} %' if change > 0 else f'{round(change, 3)} %'])
 
                 n_prev += 1
                 if n_prev >= MAX_ROWS_DISPLAYED:
