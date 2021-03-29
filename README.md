@@ -37,5 +37,5 @@ $ python alert.py
 #### Made to scare the BIT PoliTO office 👻 by  
   
 <a href="https://github.com/BITPoliTO/bitcoin-alert/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=BITPoliTO/bitcoin-alert" />
+  <img src="https://contrib.rocks/image?repo=bitpolito/bitcoin-alert" />
 </a>
