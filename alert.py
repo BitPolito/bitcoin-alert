@@ -8,12 +8,17 @@ from colorama import Fore, init
 from datetime import datetime, timedelta
 from playsound import playsound
 
+# PrettyTable Colors
+R = "\033[0;31;40m"  # RED
+G = "\033[0;32;40m"  # GREEN
+N = "\033[0m"  # RESET
+
 DEFAULT_TICKER = 'BTC'
 DEFAULT_CONVERT = 'USDT'
 DEFAULT_DELTA_TRIGGER = 0.01
 DEFAULT_SOUNDFILE = 'alert.wav'
 DEFAULT_DELTA_REFRESH_SECONDS = 30
-MAX_ROWS_DISPLAYED = 11
+MAX_ROWS_DISPLAYED = 10
 
 
 class BitcoinAlert():
@@ -54,7 +59,7 @@ class BitcoinAlert():
         try:
             init()  # colorama init
             table = PrettyTable(['Asset', 'Previous Value (' + self.convert + ')',
-                                 'New Value (' + self.convert + ')', 'Last Updated', 'Percentage'], )
+                                 'New Value (' + self.convert + ')', 'Last Updated', 'Percentage (%)'], )
             previous = 0.0
             n_prev = 0
             offset = 0
@@ -63,10 +68,10 @@ class BitcoinAlert():
                 response = requests.get(
                     f'{self.endpoint}?symbol={self.ticker}{self.convert}').json()
                 price = eval(response['price'])
-                change = self.__getPercent(price, previous)
+                percent = self.__getPercent(price, previous)
                 table.add_row([f'{self.ticker}', f'{round(previous, 2):,}',
                                f'{round(price, 2):,}', datetime.now().strftime("%H:%M:%S"),
-                               f'+{round(change, 3)} %' if change > 0 else f'{round(change, 3)} %'])
+                               G+f'+{round(percent, 3)}'+N if percent > 0 else R+f'{round(percent, 3)}'+N])
 
                 n_prev += 1
                 if n_prev >= MAX_ROWS_DISPLAYED:
@@ -74,9 +79,9 @@ class BitcoinAlert():
 
                 next_update = (datetime.now() + timedelta(seconds=self.delta_refresh_seconds)).strftime("%H:%M:%S")
                 print(f'{self.__getLogo()}\n{table.get_string(start=offset, end=MAX_ROWS_DISPLAYED + offset)}\
-                    \n\nAPI refreshes every {self.delta_refresh_seconds} seconds (Next Update at {next_update})')
+                    \n\nAPI refreshes every {self.delta_refresh_seconds} seconds (next update at {next_update})')
 
-                if (abs(change) > self.delta):
+                if (abs(percent) > self.delta):
                     playsound(self.sound_file)
                 previous = price
                 time.sleep(self.delta_refresh_seconds)
